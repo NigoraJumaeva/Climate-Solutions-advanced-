@@ -12,7 +12,8 @@
 *
 ********************************************************************************/
 const express = require("express");
-const projectData = require("./modules/projectData"); 
+// Example
+const projectData = require("./modules/projectData.js"); 
 const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
