@@ -16,6 +16,8 @@ const express = require("express");
 const projectData = require("./modules/projectData.js"); 
 const path = require("path");
 const app = express();
+require('pg'); 
+const Sequelize = require('sequelize');
 const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
