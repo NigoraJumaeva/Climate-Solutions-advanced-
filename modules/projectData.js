@@ -1,37 +1,48 @@
-// modules/projectData.js
-
-const fs = require("fs").promises;
-const path = require("path");
+const projectData = require("../data/projectData.json");
+const sectorData = require("../data/sectorData.json");
 
 let projects = [];
 
-async function initialize() {
-    try {
-        const dataPath = path.join(__dirname, "../data/projects.json"); // or projectData.json
-        const jsonData = await fs.readFile(dataPath, "utf8");
-        projects = JSON.parse(jsonData);
-    } catch (err) {
-        return Promise.reject("Unable to read projects data: " + err);
-    }
+function initialize() {
+    return new Promise((resolve, reject) => {
+        try {
+            projects = [];
+            projectData.forEach(p => {
+                const sector = sectorData.find(s => s.id === p.sector_id)?.sector_name || "Unknown";
+                projects.push({ ...p, sector });
+            });
+            resolve();
+        } catch (err) {
+            reject("Unable to initialize project data: " + err);
+        }
+    });
 }
 
 function getAllProjects() {
-    return projects;
+    return new Promise((resolve, reject) => {
+        if (projects.length === 0) reject("No projects available");
+        else resolve(projects);
+    });
 }
 
-function getProjectById(id) {
-    const project = projects.find(p => p.id === id);
-    if (!project) throw new Error(`Project ${id} not found`);
-    return project;
+function getProjectById(projectId) {
+    return new Promise((resolve, reject) => {
+        const project = projects.find(p => p.id === projectId);
+        project ? resolve(project) : reject("Project not found");
+    });
 }
 
 function getProjectsBySector(sector) {
-    return projects.filter(p => p.sector === sector);
+    return new Promise((resolve, reject) => {
+        const search = sector.toLowerCase();
+        const filtered = projects.filter(p => p.sector.toLowerCase().includes(search));
+        filtered.length === 0 ? reject(`No projects found for sector: ${sector}`) : resolve(filtered);
+    });
 }
 
-module.exports = {
-    initialize,
-    getAllProjects,
-    getProjectById,
-    getProjectsBySector
+module.exports = { 
+    initialize, 
+    getAllProjects, 
+    getProjectById, 
+    getProjectsBySector 
 };
