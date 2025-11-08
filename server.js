@@ -8,7 +8,7 @@
 *
 * Name: Nigora Jumaeva  Student ID: 101498244 Date: November 7, 2025
 *
-* Published URL: 
+* Published URL: https://vercel.com/nigorajumaevas-projects/climate-solutions/3hxyzvUjEcd6v14ZSg2cBjhCpCeE
 *
 ********************************************************************************/
 const express = require("express");
