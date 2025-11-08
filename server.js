@@ -6,64 +6,75 @@
 *
 * https://www.senecapolytechnic.ca/about/policies/academic-integrity-policy.html
 *
-* Name: Nigora Jumaeva Student ID:101498244 Date: November 7, 2025
+* Name: Nigora Jumaeva  Student ID: 101498244 Date: November 7, 2025
 *
 * Published URL: 
 *
 ********************************************************************************/
 const express = require("express");
-const path = require("path");
 const projectData = require("./modules/projectData"); 
+const path = require("path");
 const app = express();
-require('pg'); // explicitly require the "pg" module
-const Sequelize = require('sequelize');
 const PORT = process.env.PORT || 3000;
 
-projectData.initialize();
-
 app.set('view engine', 'ejs');
-app.use(express.static('public'));
-app.set('views', __dirname + '/views');
-app.use(express.static(__dirname + '/public'));
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+let dataInitialized = false;
+projectData.initialize()
+  .then(() => {
+    console.log("Project data initialized.");
+    dataInitialized = true;
+  })
+  .catch(err => console.error("Failed to initialize project data:", err));
+
+app.use((req, res, next) => {
+    if (!dataInitialized) {
+        return res.status(503).render("404", { message: "Server is starting, please try again shortly." });
+    }
+    next();
+});
+
 
 app.get('/', (req, res) => {
     res.render("home");
 });
 
+
 app.get('/about', (req, res) => {
     res.render("about");
 });
 
-app.get("/solutions/projects/:id", (req, res) => {
-  try {
-    const project = projectData.getProjectById(parseInt(req.params.id));
-    if (!project) throw "Project Not Found";
-    res.render("project", { project });
-  } catch (err) {
-    res.status(404).render("404", { message: err });
-  }
-});
 
-app.get("/solutions/projects", (req, res) => {
-  let sector = req.query.sector;
-
-  if (sector) {
-    const projects = projectData.getProjectsBySector(sector);
-    if (!projects || projects.length === 0) {
-      return res.status(404).render("404", { message: `No projects found for sector: ${sector}` });
+app.get("/solutions/projects/:id", async (req, res) => {
+    try {
+        const project = await projectData.getProjectById(parseInt(req.params.id));
+        res.render("project", { project });
+    } catch (err) {
+        res.status(404).render("404", { message: String(err) });
     }
-    return res.render("projects", { projects });
-  }
-
-  const allProjects = projectData.getAllProjects();
-  res.render("projects", { projects: allProjects });
 });
+
+
+app.get("/solutions/projects", async (req, res) => {
+    const sector = req.query.sector;
+    try {
+        const projects = sector 
+            ? await projectData.getProjectsBySector(sector)
+            : await projectData.getAllProjects();
+        res.render("projects", { projects });
+    } catch (err) {
+        res.status(404).render("404", { message: String(err) });
+    }
+});
+
 
 app.use((req, res) => {
-  res.status(404).render("404", { message: "Page Not Found" });
+    res.status(404).render("404", { message: "I am sorry, we are unable to find what you are looking for" });
 });
 
-
+module.exports = app;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is listening on port ${PORT}`);
 });
