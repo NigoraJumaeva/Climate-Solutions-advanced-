@@ -28,6 +28,7 @@ projectData.initialize()
   })
   .catch(err => console.error("Failed to initialize project data:", err));
 
+
 app.use((req, res, next) => {
     if (!dataInitialized) {
         return res.status(503).render("404", { message: "Server is starting, please try again shortly." });
