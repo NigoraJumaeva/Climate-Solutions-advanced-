@@ -12,8 +12,7 @@
 *
 ********************************************************************************/
 const express = require("express");
-// Example
-const projectData = require("./modules/projectData.js"); 
+const projectData = require("/modules/projectData.js"); 
 const path = require("path");
 const app = express();
 require('pg'); 
