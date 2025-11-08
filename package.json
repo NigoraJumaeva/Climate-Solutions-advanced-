@@ -1,0 +1,19 @@
+{
+  "name": "assignment_2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tw:build": "tailwindcss -i ./public/css/tailwind.css -o ./public/css/main.css --watch",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Nigora Jumaeva",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  }
+}

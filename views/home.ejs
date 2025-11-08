@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <title>Climate Solutions</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="bg-base-100">
+
+  <%- include('partials/navbar') %>
+
+  <div class="container mx-auto p-4">
+    <div class="hero bg-base-200 p-8 rounded-lg mb-8">
+      <div class="hero-content text-center">
+        <div>
+          <h1 class="text-4xl font-bold mb-4">Explore Climate Solutions</h1>
+          <p class="mb-6">Learn how different solutions help reduce carbon emissions around the world.</p>
+          <a href="/solutions/projects" class="btn btn-primary">View All Projects</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 Project Cards (Hardcoded) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- Project 1 -->
+      <div class="card bg-base-200 shadow">
+        <figure><img src="https://drawdown.org/sites/default/files/solutions/solution_farmlandrestoration01.jpg" /></figure>
+        <div class="card-body">
+          <h2 class="card-title">Abandoned Farmland Restoration</h2>
+          <p>Restoring degraded farmland to improve productivity and sequester carbon.</p>
+          <a href="/solutions/projects/1" class="btn btn-primary">Learn More</a>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="card bg-base-200 shadow">
+        <figure><img src="https://drawdown.org/sites/default/files/solutions2020/solution_alternativecement02.jpg" /></figure>
+        <div class="card-body">
+          <h2 class="card-title">Alternative Cement</h2>
+          <p>Reduce emissions by replacing conventional clinker materials.</p>
+          <a href="/solutions/projects/2" class="btn btn-primary">Learn More</a>
+        </div>
+      </div>
+
+      <!-- Project 3 -->
+      <div class="card bg-base-200 shadow">
+        <figure><img src="https://drawdown.org/sites/default/files/solutions2020/solution_bicycle_infrastructure.jpg" /></figure>
+        <div class="card-body">
+          <h2 class="card-title">Bicycle Infrastructure</h2>
+          <p>Encouraging cycling to reduce urban transportation emissions.</p>
+          <a href="/solutions/projects/3" class="btn btn-primary">Learn More</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
