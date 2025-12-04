@@ -1,0 +1,35 @@
+<%- include('partials/navbar') %>
+
+<div class="hero min-h-screen bg-base-200">
+  <div class="hero-content w-full max-w-md">
+    <div class="card w-full shadow-2xl bg-base-100">
+      <div class="card-body">
+        <h2 class="card-title text-3xl mb-4">Admin Login</h2>
+        <form action="/login" method="POST">
+          <div class="form-control">
+            <label class="label">User Name</label>
+            <input type="text" name="userName" placeholder="User Name" value="<%= userName %>" class="input input-bordered" required>
+          </div>
+
+          <div class="form-control">
+            <label class="label">Password</label>
+            <input type="password" name="password" placeholder="Password" class="input input-bordered" required>
+          </div>
+
+          <% if (errorMessage) { %>
+            <div role="alert" class="alert alert-error mt-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span><%= errorMessage %></span>
+            </div>
+          <% } %>
+
+          <div class="form-control mt-4">
+            <button type="submit" class="btn btn-primary">Login</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

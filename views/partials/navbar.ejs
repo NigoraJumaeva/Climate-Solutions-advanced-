@@ -4,6 +4,11 @@
   </div>
   <div class="flex-none">
     <ul class="menu menu-horizontal px-1">
+      <% if(session.user){ %>
+    <li><a href="/logout">Log Out (<%= session.user.userName %>)</a></li>
+<% } else { %>
+    <li><a href="/login">Log In</a></li>
+<% } %>
 
       <li><a href="/about">About</a></li>
 
