@@ -1,39 +1,16 @@
 <%- include('partials/navbar') %>
-
-<h1>Add Project</h1>
-
-<form action="/solutions/addProject" method="POST">
-  <label>Title
-    <input type="text" name="title" required />
-  </label>
-
-  <label>Feature Image URL
-    <input type="url" name="feature_img_url" required />
-  </label>
-
-  <label>Sector
-    <select name="sector_id" required>
-      <% sectors.forEach(s => { %>
-        <option value="<%= s.id %>"><%= s.sector_name %></option>
-      <% }) %>
+<h1 class="text-3xl font-bold my-4">Add Project</h1>
+<form action="/solutions/addProject" method="POST" class="space-y-4">
+    <input type="text" name="title" placeholder="Title" required class="input input-bordered w-full"/>
+    <input type="url" name="feature_img_url" placeholder="Feature Image URL" required class="input input-bordered w-full"/>
+    <select name="sector_id" required class="select select-bordered w-full">
+        <% sectors.forEach(s => { %>
+            <option value="<%= s.id %>"><%= s.sector_name %></option>
+        <% }) %>
     </select>
-  </label>
-
-  <label>Intro Short
-    <textarea name="intro_short" required></textarea>
-  </label>
-
-  <label>Summary Short
-    <textarea name="summary_short" required></textarea>
-  </label>
-
-  <label>Impact
-    <textarea name="impact" required></textarea>
-  </label>
-
-  <label>Original Source URL
-    <input type="url" name="original_source_url" required />
-  </label>
-
-  <button type="submit" class="btn btn-primary">Submit</button>
+    <textarea name="intro_short" placeholder="Intro Short" required class="textarea textarea-bordered w-full"></textarea>
+    <textarea name="summary_short" placeholder="Summary Short" required class="textarea textarea-bordered w-full"></textarea>
+    <textarea name="impact" placeholder="Impact" required class="textarea textarea-bordered w-full"></textarea>
+    <input type="url" name="original_source_url" placeholder="Original Source URL" required class="input input-bordered w-full"/>
+    <button type="submit" class="btn btn-success">Add Project</button>
 </form>

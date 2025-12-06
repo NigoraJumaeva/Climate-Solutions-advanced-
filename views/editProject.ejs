@@ -1,42 +1,18 @@
 <%- include('partials/navbar') %>
-
-<h1>Edit Project: <%= project.title %></h1>
-
-<form action="/solutions/editProject" method="POST">
-  <input type="hidden" name="id" value="<%= project.id %>" />
-
-  <label>Title
-    <input type="text" name="title" value="<%= project.title %>" required />
-  </label>
-
-  <label>Feature Image URL
-    <input type="url" name="feature_img_url" value="<%= project.feature_img_url %>" required />
-  </label>
-
-  <label>Sector
-    <select name="sector_id" required>
-      <% sectors.forEach(s => { %>
-        <option value="<%= s.id %>" <%= (project.sector_id == s.id) ? 'selected' : '' %>><%= s.sector_name %></option>
-      <% }) %>
+<h1 class="text-3xl font-bold my-4">Edit Project - <%= project.title %></h1>
+<form action="/solutions/editProject" method="POST" class="space-y-4">
+    <input type="hidden" name="id" value="<%= project.id %>"/>
+    <input type="text" name="title" value="<%= project.title %>" required class="input input-bordered w-full"/>
+    <input type="url" name="feature_img_url" value="<%= project.feature_img_url %>" required class="input input-bordered w-full"/>
+    <select name="sector_id" required class="select select-bordered w-full">
+        <% sectors.forEach(s => { %>
+            <option value="<%= s.id %>" <%= project.sector_id == s.id ? "selected" : "" %>><%= s.sector_name %></option>
+        <% }) %>
     </select>
-  </label>
-
-  <label>Intro Short
-    <textarea name="intro_short" required><%= project.intro_short %></textarea>
-  </label>
-
-  <label>Summary Short
-    <textarea name="summary_short" required><%= project.summary_short %></textarea>
-  </label>
-
-  <label>Impact
-    <textarea name="impact" required><%= project.impact %></textarea>
-  </label>
-
-  <label>Original Source URL
-    <input type="url" name="original_source_url" value="<%= project.original_source_url %>" required />
-  </label>
-
-  <button type="submit" class="btn btn-primary">Update Project</button>
-  <a href="/solutions/deleteProject/<%= project.id %>" class="btn btn-error" style="margin-left:12px">Delete Project</a>
+    <textarea name="intro_short" required class="textarea textarea-bordered w-full"><%= project.intro_short %></textarea>
+    <textarea name="summary_short" required class="textarea textarea-bordered w-full"><%= project.summary_short %></textarea>
+    <textarea name="impact" required class="textarea textarea-bordered w-full"><%= project.impact %></textarea>
+    <input type="url" name="original_source_url" value="<%= project.original_source_url %>" required class="input input-bordered w-full"/>
+    <button type="submit" class="btn btn-success">Update Project</button>
+    <a href="/solutions/deleteProject/<%= project.id %>" class="btn btn-error">Delete Project</a>
 </form>

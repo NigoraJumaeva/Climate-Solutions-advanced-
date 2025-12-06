@@ -1,61 +1,59 @@
 <!DOCTYPE html>
-<meta charset="UTF-8">
-<title>Projects | Climate Solutions</title>
-<link rel="stylesheet" href="/css/main.css">
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <title>Projects | Climate Solutions</title>
+  <link rel="stylesheet" href="/css/main.css">
 </head>
 <body class="bg-base-100">
 
+  <%- include('partials/navbar') %>
 
-<%- include('partials/navbar') %>
+  <div class="container mx-auto p-6">
 
+    <div class="hero bg-base-200 p-8 rounded-lg mb-8">
+      <div class="hero-content text-center">
+        <div>
+          <h1 class="text-4xl font-bold">Projects</h1>
+          <p>Select a sector or browse all solutions.</p>
+        </div>
+      </div>
+    </div>
 
-<div class="container mx-auto p-6">
-<div class="hero bg-base-200 p-8 rounded-lg mb-8">
-<div class="hero-content text-center">
-<h1 class="text-4xl font-bold">Projects</h1>
-</div>
-</div>
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Sector</th>
+            <th>Description</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% projects.forEach(project => { %>
+            <tr>
+              <td><%= project.title %></td>
 
+              <td>
+                <a href="/solutions/projects?sector=<%= project.sector %>" class="btn btn-sm">
+                  <%= project.sector %>
+                </a>
+              </td>
 
-<% if (session.user) { %>
-<a href="/solutions/addProject" class="btn btn-primary mb-4">Add Project</a>
-<% } %>
+              <td><%= project.summary_short %></td>
 
+              <td>
+                <a href="/solutions/projects/<%= project.id %>" class="btn btn-primary btn-sm">
+                  Details
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
 
-<table class="table table-zebra w-full">
-<thead>
-<tr>
-<th>Title</th>
-<th>Sector</th>
-<th>Description</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<% projects.forEach(project => { %>
-<tr>
-<td><%= project.title %></td>
-
-
-<td>
-<a class="btn btn-sm" href="/solutions/projects?sector=<%= project.Sector.sector_name %>">
-<%= project.Sector.sector_name %>
-</a>
-</td>
-
-
-<td><%= project.summary_short %></td>
-
-
-<td>
-<a href="/solutions/projects/<%= project.id %>" class="btn btn-primary btn-sm">Details</a>
-</td>
-</tr>
-<% }) %>
-</tbody>
-</table>
-</div>
-
-
+  </div>
 </body>
 </html>

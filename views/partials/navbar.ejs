@@ -1,10 +1,26 @@
-<nav>
-  <a href="/solutions/projects">Home</a> |
-  <% if (session && session.user) { %>
-    <a href="/solutions/addProject" class="btn btn-success">Add Project</a> |
-    <a href="/logout">Log Out (<%= session.user.userName %>)</a>
-  <% } else { %>
-    <a href="/login">Log In</a>
-  <% } %>
+<nav class="bg-base-200 p-4 shadow-md">
+  <div class="container mx-auto flex justify-between items-center">
+    <a href="/" class="text-xl font-bold">My Projects</a>
+    
+    <ul class="flex space-x-4 items-center">
+      <!-- Always show View All -->
+      <li><a href="/solutions/projects" class="btn btn-ghost btn-sm">View All</a></li>
+
+      <!-- Add Project button only for logged-in users -->
+      <% if(session.user){ %>
+        <li><a href="/solutions/addProject" class="btn btn-success btn-sm">Add Project</a></li>
+      <% } %>
+
+      <!-- Conditional Login/Logout -->
+      <% if(!session.user){ %>
+        <li><a href="/login" class="btn btn-primary btn-sm">Log In</a></li>
+      <% } else { %>
+        <li>
+          <a href="/logout" class="btn btn-error btn-sm">
+            Log Out
+          </a>
+        </li>
+      <% } %>
+    </ul>
+  </div>
 </nav>
-<hr />

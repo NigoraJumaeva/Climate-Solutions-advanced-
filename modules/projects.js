@@ -22,12 +22,14 @@ const Sector = sequelize.define("Sector", {
 }, { timestamps: false });
 
 const Project = sequelize.define("Project", {
-    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    name: DataTypes.STRING,
-    description: DataTypes.TEXT,
-    sector_id: DataTypes.INTEGER,
-    budget: DataTypes.FLOAT
-}, { timestamps: false });
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    title: DataTypes.STRING,
+    feature_img_url: DataTypes.STRING,
+    summary_short: DataTypes.TEXT,
+    intro_short: DataTypes.TEXT,
+    impact: DataTypes.TEXT,
+    original_source_url: DataTypes.STRING
+}, { timestamps: false, freezeTableName: true });
 
 // Relationship
 Project.belongsTo(Sector, { foreignKey: "sector_id" });
@@ -36,54 +38,54 @@ Project.belongsTo(Sector, { foreignKey: "sector_id" });
 // INIT FUNCTION
 async function initialize() {
     try {
-        await sequelize.authenticate();
-        console.log("Connected to Neon PostgreSQL 👍");
-
         await sequelize.sync();
-
-        // Insert sectors if not present
-        const sectorCount = await Sector.count();
-        if (sectorCount === 0) {
-            await Sector.bulkCreate([
-                { id: 1, sector_name: "Technology" },
-                { id: 2, sector_name: "Finance" },
-                { id: 3, sector_name: "Healthcare" },
-                { id: 4, sector_name: "Education" }
-            ]);
-            console.log("Inserted default sector data.");
-        }
-
-    } catch (err) {
+        console.log("Database synced successfully");
+        return Promise.resolve();
+      } catch (err) {
         console.error("Unable to initialize database:", err);
-        throw err;
+        return Promise.reject(err);
     }
 }
 
 // GET ALL PROJECTS
 function getAllProjects() {
-    return Project.findAll({ include: Sector })
-        .then(data => data)
+    return Project.findAll({ include: [Sector] })
+        .then(data => {
+            if (!data || data.length === 0) throw "No projects found";
+            return data;
+        });
 }
 
 // GET PROJECT BY ID
-function getProjectById(id) {
-    return Project.findOne({
-        where: { id },
-        include: Sector
-    }).then(proj => {
-        if (!proj) throw "Project not found";
-        return proj;
+function getProjectById(projectId) {
+    return Project.findAll({
+        where: { id: projectId },
+        include: [Sector]
+    }).then(results => {
+        if (!results || results.length === 0) throw "Unable to find requested project";
+        return results[0]; // return a single project object
     });
 }
 
 // FILTER PROJECTS BY SECTOR NAME
-function getProjectsBySector(sectorName) {
+function getProjectsBySector(sector) {
     return Project.findAll({
-        include: { model: Sector, where: { sector_name: { [Sequelize.Op.iLike]: `%${sectorName}%` } } }
+        include: [Sector],
+        where: {
+            '$Sector.sector_name$': {
+                [Sequelize.Op.iLike]: `%${sector}%`
+            }
+        }
     }).then(list => {
-        if (list.length === 0) throw "No projects found";
+        if (!list || list.length === 0) throw "Unable to find requested projects";
         return list;
     });
+}
+// GET ALL SECTORS
+function getAllSectors() {
+    return Sector.findAll()
+        .then(sectors => sectors)
+        .catch(err => { throw err; });
 }
 
 // ADD PROJECT
@@ -95,6 +97,25 @@ function addProject(projectData) {
 function updateProject(id, projectData) {
     return Project.update(projectData, { where: { id } });
 }
+// EDIT PROJECT
+function editProject(id, projectData) {
+    return Project.update(projectData, { where: { id } })
+        .then(result => {
+            // result[0] is the number of rows updated
+            if (result[0] === 0) {
+                return Promise.reject("Project not found or no changes made");
+            }
+        })
+        .catch(err => {
+            // Provide human-readable error message
+            if (err.errors && err.errors.length > 0) {
+                return Promise.reject(err.errors[0].message);
+            } else {
+                return Promise.reject(err.message || err);
+            }
+        });
+}
+
 
 // DELETE PROJECT
 function deleteProject(id) {
@@ -106,7 +127,46 @@ module.exports = {
     getAllProjects,
     getProjectById,
     getProjectsBySector,
+    getAllSectors,
     addProject,
     updateProject,
+    editProject,  
     deleteProject
 };
+// if (require.main === module) {
+//   // run as script
+//   (async () => {
+//     try {
+//       const projectData = require('../data/projectData.json');
+//       const sectorData = require('../data/sectorData.json');
+
+//       await sequelize.sync();
+
+//       try {
+//         await Sector.bulkCreate(sectorData);
+//       } catch (e) {
+//         console.log("Warning inserting sectors:", e.message || e);
+//       }
+
+//       try {
+//         await Project.bulkCreate(projectData);
+//       } catch (e) {
+//         console.log("Warning inserting projects:", e.message || e);
+//       }
+
+//       // Fix sequences so SERIAL values continue correctly
+//       try {
+//         await sequelize.query(`SELECT setval(pg_get_serial_sequence('"Sectors"', 'id'), (SELECT MAX(id) FROM "Sectors"))`);
+//         await sequelize.query(`SELECT setval(pg_get_serial_sequence('"Projects"', 'id'), (SELECT MAX(id) FROM "Projects"))`);
+//       } catch (e) {
+//         console.log("Warning fixing sequences:", e.message || e);
+//       }
+
+//       console.log("data inserted successfully");
+//       process.exit(0);
+//     } catch (err) {
+//       console.error("Unable to connect / insert data:", err);
+//       process.exit(1);
+//     }
+//   })();
+// }
