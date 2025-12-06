@@ -1,71 +1,112 @@
-require('dotenv').config();
-const { Sequelize, DataTypes, Op } = require('sequelize');
+require("dotenv").config();
+const { Sequelize, DataTypes } = require("sequelize");
 
-// Create Sequelize instance
+// Initialize connection (Neon requires SSL)
 const sequelize = new Sequelize(process.env.PGDATABASE, process.env.PGUSER, process.env.PGPASSWORD, {
     host: process.env.PGHOST,
-    dialect: 'postgres',
-    logging: false,
+    dialect: "postgres",
+    port: process.env.PGPORT,
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    },
+    logging: false
 });
 
-// Define models
-const Sector = sequelize.define('Sector', {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+// Models
+const Sector = sequelize.define("Sector", {
+    id: { type: DataTypes.INTEGER, primaryKey: true },
     sector_name: DataTypes.STRING
 }, { timestamps: false });
 
-const Project = sequelize.define('Project', {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    title: DataTypes.STRING,
-    feature_img_url: DataTypes.STRING,
-    summary_short: DataTypes.TEXT,
-    intro_short: DataTypes.TEXT,
-    impact: DataTypes.TEXT,
-    original_source_url: DataTypes.STRING,
-    sector_id: DataTypes.INTEGER
+const Project = sequelize.define("Project", {
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    name: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    sector_id: DataTypes.INTEGER,
+    budget: DataTypes.FLOAT
 }, { timestamps: false });
 
-// Association
-Project.belongsTo(Sector, { foreignKey: 'sector_id' });
+// Relationship
+Project.belongsTo(Sector, { foreignKey: "sector_id" });
 
-// Initialize DB
-function initialize() {
-    return sequelize.sync();
+
+// INIT FUNCTION
+async function initialize() {
+    try {
+        await sequelize.authenticate();
+        console.log("Connected to Neon PostgreSQL 👍");
+
+        await sequelize.sync();
+
+        // Insert sectors if not present
+        const sectorCount = await Sector.count();
+        if (sectorCount === 0) {
+            await Sector.bulkCreate([
+                { id: 1, sector_name: "Technology" },
+                { id: 2, sector_name: "Finance" },
+                { id: 3, sector_name: "Healthcare" },
+                { id: 4, sector_name: "Education" }
+            ]);
+            console.log("Inserted default sector data.");
+        }
+
+    } catch (err) {
+        console.error("Unable to initialize database:", err);
+        throw err;
+    }
 }
 
-// CRUD functions
+// GET ALL PROJECTS
 function getAllProjects() {
-    return Project.findAll({ include: [Sector] });
+    return Project.findAll({ include: Sector })
+        .then(data => data)
 }
 
-function getProjectById(projectId) {
-    return Project.findAll({ where: { id: projectId }, include: [Sector] })
-        .then(results => results[0] || Promise.reject("Project not found"));
+// GET PROJECT BY ID
+function getProjectById(id) {
+    return Project.findOne({
+        where: { id },
+        include: Sector
+    }).then(proj => {
+        if (!proj) throw "Project not found";
+        return proj;
+    });
 }
 
-function getProjectsBySector(sector) {
-    return Project.findAll({ 
-        include: [Sector],
-        where: { '$Sector.sector_name$': { [Op.iLike]: `%${sector}%` } } 
-    }).then(results => results.length ? results : Promise.reject(`No projects found for sector: ${sector}`));
+// FILTER PROJECTS BY SECTOR NAME
+function getProjectsBySector(sectorName) {
+    return Project.findAll({
+        include: { model: Sector, where: { sector_name: { [Sequelize.Op.iLike]: `%${sectorName}%` } } }
+    }).then(list => {
+        if (list.length === 0) throw "No projects found";
+        return list;
+    });
 }
 
+// ADD PROJECT
 function addProject(projectData) {
     return Project.create(projectData);
 }
 
-function editProject(id, projectData) {
-    return Project.update(projectData, { where: { id } })
-        .then(([rowsUpdated]) => rowsUpdated ? Promise.resolve() : Promise.reject("Update failed"));
+// UPDATE PROJECT
+function updateProject(id, projectData) {
+    return Project.update(projectData, { where: { id } });
 }
 
+// DELETE PROJECT
 function deleteProject(id) {
-    return Project.destroy({ where: { id } })
-        .then(deleted => deleted ? Promise.resolve() : Promise.reject("Delete failed"));
+    return Project.destroy({ where: { id } });
 }
 
-function getAllSectors() {
-    return Sector.findAll();
-}
-
-module.exports = { initialize, getAllProjects, getProjectById, getProjectsBySector, addProject, editProject, deleteProject, getAllSectors };
+module.exports = {
+    initialize,
+    getAllProjects,
+    getProjectById,
+    getProjectsBySector,
+    addProject,
+    updateProject,
+    deleteProject
+};

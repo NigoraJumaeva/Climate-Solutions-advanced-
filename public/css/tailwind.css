@@ -1,7 +1,7 @@
-@import "tailwindcss";
-@plugin "@tailwindcss/typography";
-@plugin "daisyui";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --daisyui-theme: light;
-}
+/* Optional plugins if installed */
+@import "daisyui";
+@import "@tailwindcss/typography";

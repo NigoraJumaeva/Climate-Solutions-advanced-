@@ -1,55 +1,39 @@
 <%- include('partials/navbar') %>
 
-<div class="hero min-h-screen bg-base-200">
-  <div class="hero-content w-full max-w-lg">
-    <div class="card w-full shadow-2xl bg-base-100">
-      <div class="card-body">
-        <h2 class="card-title text-3xl mb-4">Add Project</h2>
-        <form action="/solutions/addProject" method="POST">
-          <div class="form-control">
-            <label class="label">Title</label>
-            <input type="text" name="title" placeholder="Project Title" class="input input-bordered" required>
-          </div>
+<h1>Add Project</h1>
 
-          <div class="form-control">
-            <label class="label">Feature Image URL</label>
-            <input type="url" name="feature_img_url" placeholder="https://example.com/image.jpg" class="input input-bordered" required>
-          </div>
+<form action="/solutions/addProject" method="POST">
+  <label>Title
+    <input type="text" name="title" required />
+  </label>
 
-          <div class="form-control">
-            <label class="label">Sector</label>
-            <select name="sector_id" class="select select-bordered" required>
-              <% sectors.forEach(sector => { %>
-                <option value="<%= sector.id %>"><%= sector.sector_name %></option>
-              <% }) %>
-            </select>
-          </div>
+  <label>Feature Image URL
+    <input type="url" name="feature_img_url" required />
+  </label>
 
-          <div class="form-control">
-            <label class="label">Introduction</label>
-            <textarea name="intro_short" class="textarea textarea-bordered" required></textarea>
-          </div>
+  <label>Sector
+    <select name="sector_id" required>
+      <% sectors.forEach(s => { %>
+        <option value="<%= s.id %>"><%= s.sector_name %></option>
+      <% }) %>
+    </select>
+  </label>
 
-          <div class="form-control">
-            <label class="label">Summary</label>
-            <textarea name="summary_short" class="textarea textarea-bordered" required></textarea>
-          </div>
+  <label>Intro Short
+    <textarea name="intro_short" required></textarea>
+  </label>
 
-          <div class="form-control">
-            <label class="label">Impact</label>
-            <textarea name="impact" class="textarea textarea-bordered" required></textarea>
-          </div>
+  <label>Summary Short
+    <textarea name="summary_short" required></textarea>
+  </label>
 
-          <div class="form-control">
-            <label class="label">Original Source URL</label>
-            <input type="url" name="original_source_url" placeholder="https://example.com" class="input input-bordered" required>
-          </div>
+  <label>Impact
+    <textarea name="impact" required></textarea>
+  </label>
 
-          <div class="form-control mt-4">
-            <button type="submit" class="btn btn-primary">Add Project</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+  <label>Original Source URL
+    <input type="url" name="original_source_url" required />
+  </label>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
